@@ -1,5 +1,5 @@
 {
-  "name": "react-redux-example",
+  "name": "chat-room",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
