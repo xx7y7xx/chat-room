@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
+import io from 'socket.io-client';
 import logo from './logo.svg';
 import './App.css';
+
+const socket = io('127.0.0.1:3001');
+
+socket.on('connect_error', (error) => {
+  console.log('socket event connect_error', error)
+});
+
+socket.on('connect_timeout', (timeout) => {
+  console.log('socket event connect_timeout', timeout)
+});
 
 class App extends Component {
   render() {
