@@ -3,7 +3,11 @@ import io from 'socket.io-client';
 import logo from './logo.svg';
 import './App.css';
 
-const socket = io('127.0.0.1:3001');
+let url = '127.0.0.1:3000';
+if (process.env.NODE_ENV === 'production') {
+  url = 'chat-server.yyssc.org:3001';
+}
+const socket = io(url);
 
 socket.on('connect_error', (error) => {
   console.log('socket event connect_error', error)
