@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import Emojify from 'react-emojione';
+import Scroll from 'react-scroll';
 
 import logo from './logo.svg';
 import './App.css';
@@ -70,8 +71,10 @@ class App extends Component {
       messages.push(msg);
       this.setState({
         messages,
-      })
+      });
+      this.scrollToBottom();
     });
+    this.scrollToBottom();
   }
   handleTextBoxChange(event) {
     const { value } = event.target;
@@ -110,6 +113,9 @@ class App extends Component {
     this.setState({
       textBoxValue: '',
     });
+  }
+  scrollToBottom() {
+    Scroll.animateScroll.scrollToBottom();
   }
   render() {
     return (
