@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
 import moment from 'moment';
+import Cookies from 'universal-cookie';
 
 import logo from './logo.svg';
 import './App.css';
+
+const cookies = new Cookies();
 
 let url = '127.0.0.1:3001';
 if (process.env.NODE_ENV === 'production') {
@@ -21,11 +24,11 @@ socket.on('connect_timeout', (timeout) => {
 
 /**
  * [createMessageObj description]
- * @param  {string} m            message
- * @param  {string} [n='nobody'] name
- * @return {[type]}              [description]
+ * @param  {string} m message
+ * @param  {string} n name
+ * @return {[type]}   [description]
  */
-const createMessageObj = (m, n = 'nobody') => ({
+const createMessageObj = (m, n) => ({
   m,
   t: new Date().getTime(),
   n,
@@ -45,6 +48,7 @@ class App extends Component {
       value: '',
       messages: [],
     };
+    this.username = cookies.get('username') || 'nobody';
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
   }
@@ -70,7 +74,7 @@ class App extends Component {
     });
   }
   handleClick() {
-    socket.emit('chat message', createMessageObj(this.state.value));
+    socket.emit('chat message', createMessageObj(this.state.value, this.username));
     this.setState({
       value: '',
     });
@@ -83,7 +87,7 @@ class App extends Component {
           <h2>Welcome to React</h2>
         </div>
         <p className="App-intro">
-          天朝拆迁队
+          天朝拆迁队 [{this.username}]
         </p>
         <ul id="messages">
           {this.state.messages.map(
