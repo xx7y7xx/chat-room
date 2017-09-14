@@ -22,6 +22,8 @@ socket.on('connect_timeout', (timeout) => {
   console.log('socket event connect_timeout', timeout);
 });
 
+const anonymousName = 'nobody';
+
 /**
  * [createMessageObj description]
  * @param  {string} m message
@@ -47,10 +49,12 @@ class App extends Component {
     this.state = {
       value: '',
       messages: [],
+      username: cookies.get('username') || anonymousName,
     };
-    this.username = cookies.get('username') || 'nobody';
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleLogoutBtnClick = this.handleLogoutBtnClick.bind(this);
+    this.handleLoginBtnClick = this.handleLoginBtnClick.bind(this);
   }
   componentDidMount() {
     socket.emit('last-messages', (messages) => {
@@ -74,10 +78,28 @@ class App extends Component {
     });
   }
   handleClick() {
-    socket.emit('chat message', createMessageObj(this.state.value, this.username));
+    socket.emit('chat message', createMessageObj(this.state.value, this.state.username));
     this.setState({
       value: '',
     });
+  }
+  handleLogoutBtnClick() {
+    if (window.confirm('是否注销') === true) {
+        cookies.remove('username');
+        this.setState({
+          username: anonymousName,
+        });
+    } else {
+    }
+  }
+  handleLoginBtnClick() {
+    const username = window.prompt('请随便输入一个用户名，比如“我是foo”');
+    if (username) {
+      cookies.set('username', username);
+      this.setState({
+        username,
+      });
+    }
   }
   render() {
     return (
@@ -87,7 +109,13 @@ class App extends Component {
           <h2>Welcome to React</h2>
         </div>
         <p className="App-intro">
-          天朝拆迁队 [{this.username}]
+          天朝拆迁队 [
+            {this.state.username}
+            {this.state.username !== anonymousName
+              ? <button onClick={this.handleLogoutBtnClick}>注销</button>
+              : <button onClick={this.handleLoginBtnClick}>登录</button>
+            }
+          ]
         </p>
         <ul id="messages">
           {this.state.messages.map(
