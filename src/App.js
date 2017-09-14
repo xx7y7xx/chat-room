@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
+import moment from 'moment';
+
 import logo from './logo.svg';
 import './App.css';
 
@@ -16,6 +18,25 @@ socket.on('connect_error', (error) => {
 socket.on('connect_timeout', (timeout) => {
   console.log('socket event connect_timeout', timeout);
 });
+
+/**
+ * [createMessageObj description]
+ * @param  {string} m            message
+ * @param  {string} [n='nobody'] name
+ * @return {[type]}              [description]
+ */
+const createMessageObj = (m, n = 'nobody') => ({
+  m,
+  t: new Date().getTime(),
+  n,
+});
+
+/**
+ * [timeFormater description]
+ * @param  {number} ts e.g. 1505359605655
+ * @return {[type]}    [description]
+ */
+const timeFormater = ts => moment(ts).format();
 
 class App extends Component {
   constructor(props) {
@@ -49,7 +70,7 @@ class App extends Component {
     });
   }
   handleClick() {
-    socket.emit('chat message', this.state.value);
+    socket.emit('chat message', createMessageObj(this.state.value));
     this.setState({
       value: '',
     });
@@ -65,9 +86,11 @@ class App extends Component {
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
         <ul id="messages">
-          {
-            this.state.messages.map((message, i) => <li key={i}>{message}</li>)
-          }
+          {this.state.messages.map(
+            (msgObj) => <li key={msgObj.t}>
+              {`[${timeFormater(msgObj.t)}] ${msgObj.n}: ${msgObj.m}`}
+            </li>
+          )}
         </ul>
         <div className="chat">
           <input
