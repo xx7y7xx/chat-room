@@ -47,14 +47,15 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: '',
+      textBoxValue: '',
       messages: [],
       username: cookies.get('username') || anonymousName,
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleTextBoxChange = this.handleTextBoxChange.bind(this);
+    this.handleSendBtnClick = this.handleSendBtnClick.bind(this);
     this.handleLogoutBtnClick = this.handleLogoutBtnClick.bind(this);
     this.handleLoginBtnClick = this.handleLoginBtnClick.bind(this);
+    this.handleTextBoxKeyPress = this.handleTextBoxKeyPress.bind(this);
   }
   componentDidMount() {
     socket.emit('last-messages', (messages) => {
@@ -71,17 +72,19 @@ class App extends Component {
       })
     });
   }
-  handleChange(event) {
+  handleTextBoxChange(event) {
     const { value } = event.target;
     this.setState({
-      value,
+      textBoxValue: value,
     });
   }
-  handleClick() {
-    socket.emit('chat message', createMessageObj(this.state.value, this.state.username));
-    this.setState({
-      value: '',
-    });
+  handleSendBtnClick() {
+    this.sendMessage();
+  }
+  handleTextBoxKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.sendMessage();
+    }
   }
   handleLogoutBtnClick() {
     if (window.confirm('是否注销') === true) {
@@ -100,6 +103,12 @@ class App extends Component {
         username,
       });
     }
+  }
+  sendMessage() {
+    socket.emit('chat message', createMessageObj(this.state.textBoxValue, this.state.username));
+    this.setState({
+      textBoxValue: '',
+    });
   }
   render() {
     return (
@@ -128,10 +137,11 @@ class App extends Component {
           <input
             id="m"
             autoComplete="off"
-            value={this.state.value}
-            onChange={this.handleChange}
+            value={this.state.textBoxValue}
+            onChange={this.handleTextBoxChange}
+            onKeyPress={this.handleTextBoxKeyPress}
           />
-        <button onClick={this.handleClick}>发送</button>
+        <button onClick={this.handleSendBtnClick}>发送</button>
         </div>
       </div>
     );
