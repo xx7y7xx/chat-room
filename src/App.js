@@ -3,18 +3,18 @@ import io from 'socket.io-client';
 import logo from './logo.svg';
 import './App.css';
 
-let url = '127.0.0.1:3000';
+let url = '127.0.0.1:3001';
 if (process.env.NODE_ENV === 'production') {
   url = 'chat-server.yyssc.org:3001';
 }
 const socket = io(url);
 
 socket.on('connect_error', (error) => {
-  console.log('socket event connect_error', error)
+  console.log('socket event connect_error', error);
 });
 
 socket.on('connect_timeout', (timeout) => {
-  console.log('socket event connect_timeout', timeout)
+  console.log('socket event connect_timeout', timeout);
 });
 
 class App extends Component {
@@ -28,6 +28,12 @@ class App extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
   componentDidMount() {
+    socket.emit('last-messages', (messages) => {
+      console.log('[socket.io-client] emit last-messages', messages);
+      this.setState({
+        messages,
+      });
+    })
     socket.on('chat message', msg => {
       const messages = [ ...this.state.messages ];
       messages.push(msg);
