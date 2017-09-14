@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
+import Emojify from 'react-emojione';
 
 import logo from './logo.svg';
 import './App.css';
@@ -129,7 +130,10 @@ class App extends Component {
         <ul id="messages">
           {this.state.messages.map(
             (msgObj) => <li key={msgObj.t}>
-              {`[${timeFormater(msgObj.t)}] ${msgObj.n}: ${msgObj.m}`}
+              {`[${timeFormater(msgObj.t)}] ${msgObj.n}: `}
+              <Emojify
+                style={{ backgroundImage: 'url("./emojione.sprites.png")', }}
+              >{msgObj.m}</Emojify>
             </li>
           )}
         </ul>

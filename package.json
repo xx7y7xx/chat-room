@@ -6,6 +6,7 @@
     "moment": "^2.18.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-emojione": "^3.1.10",
     "react-scripts": "1.0.13",
     "socket.io-client": "^2.0.3",
     "universal-cookie": "^2.1.0"
